@@ -1,0 +1,18 @@
+version: '3'
+services:
+  kibana:
+    ports: []
+    networks:
+      - elk
+      - traefik-public
+    labels:
+      - traefik.enable=true
+      - traefik.constraint-label=traefik-public
+      - traefik.docker.network=traefik-public
+      - traefik.http.routers.kibana.entrypoints=https
+      - traefik.http.routers.kibana-router.tls=true
+      - traefik.http.routers.kibana-router.tls.certresolver=cloudflare
+
+      - traefik.http.routers.kibana-router.rule=Host(`${KIBANA_HOST?Variable not set}`)
+      - traefik.http.routers.kibana-router.service=kibana-service
+      - traefik.http.services.kibana-service.loadbalancer.server.port=5601
